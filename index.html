@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener with Bitly</title>
+</head>
+
+<body>
+    <section>
+        <div>
+            <input type="text" id="input-field" placeholder="Enter URL here" value="https://example.com">
+            <button id="button" onclick="shortenURL()">Shorten URL</button>
+            <div class="display-message"></div>
+        </div>
+    </section>
+
+    <script>
+        async function shortenURL() {
+            var inputData = document.getElementById('input-field');
+            var originalURL = inputData.value;
+
+            // Replace 'YOUR_BITLY_API_TOKEN' with your actual Bitly API token
+            var apiToken = '6b05a754b986928eba64ecbe677cdb4f1de6be7c';
+
+            try {
+                var response = await fetch('https://api-ssl.bitly.com/v4/shorten', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + apiToken,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        long_url: originalURL,
+                        domain: 'bit.ly'
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to shorten URL');
+                }
+
+                var data = await response.json();
+                var shortURL = data.link;
+
+                var displayMessageDiv = document.querySelector('.display-message');
+                displayMessageDiv.innerHTML = `<a href="${shortURL}" target="_blank">${shortURL}</a>`;
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>
